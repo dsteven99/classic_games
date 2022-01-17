@@ -138,6 +138,7 @@ const Snake = () => {
                 respawn_snake();
                 respawn_food();
                 run_action = true;
+                scoreLabel.text = "Score: " + (snake_length - 3).toString();
             });
         }
 
@@ -240,6 +241,7 @@ const Snake = () => {
 
         k.onCollide("snake", "food", (s, f) => {
             snake_length++;
+            scoreLabel.text = "Score: " + (snake_length - 3).toString();
             respawn_food();
         });
 
@@ -293,6 +295,13 @@ const Snake = () => {
                 size: 48
             }),
             k.pos(300, 10),
+        ]);
+
+        const scoreLabel = k.add([
+            k.text("Score: " + (snake_length - 3).toString(), {
+                size: 32
+            }),
+            k.pos(65,300)
         ]);
 
     }, []);
