@@ -14,6 +14,18 @@ const Snake = () => {
 
         });
 
+        k.loadSound("other-worldly-foe", "/audio/snake/otherworldlyfoe.mp3");
+        k.loadSound("burp", "/audio/snake/burp.mp3");
+        k.loadSound("powerup", "/audio/snake/powerup.mp3");
+        k.loadSound("explode", "/audio/snake/explode.mp3");
+
+        const music = k.play("other-worldly-foe", {
+            loop: true,
+        });
+
+        // Adjust global volume
+        k.volume(0.5)
+
         k.loadSprite("pizza", "images/snake/pizza.png");
         k.loadSprite("background", "images/snake/background.png");
         k.loadSprite("fence-top", "images/snake/fence-top.png");
@@ -139,6 +151,8 @@ const Snake = () => {
                 respawn_food();
                 run_action = true;
                 scoreLabel.text = "Score: " + (snake_length - 3).toString();
+                k.play("powerup");
+                music.play();
             });
         }
 
@@ -240,6 +254,7 @@ const Snake = () => {
         }
 
         k.onCollide("snake", "food", (s, f) => {
+            k.play("burp");
             snake_length++;
             scoreLabel.text = "Score: " + (snake_length - 3).toString();
             respawn_food();
@@ -247,13 +262,17 @@ const Snake = () => {
 
         k.onCollide("snake", "wall", (s, w) => {
             run_action = false;
+            k.play("explode");
             k.shake(12);
+            music.pause();
             //respawn_all();
         });
 
         k.onCollide("snake", "snake", (s, t) => {
             run_action = false;
+            k.play("explode");
             k.shake(12);
+            music.pause();
             //respawn_all();
         });
 
@@ -292,7 +311,13 @@ const Snake = () => {
 
         k.add([
             k.text("Snake", {
-                size: 48
+                size: 48,
+                transform: (idx, ch) => ({
+                    color: k.hsl2rgb((k.time() * 0.2 + idx * 0.1) % 1, 0.7, 0.8),
+                    pos: k.vec2(0, k.wave(-4, 4, k.time() * 4 + idx * 0.5)),
+                    scale: k.wave(1, 1.2, k.time() * 3 + idx),
+                    angle: k.wave(-9, 9, k.time() * 3 + idx),
+                }),
             }),
             k.pos(300, 10),
         ]);
@@ -301,8 +326,9 @@ const Snake = () => {
             k.text("Score: " + (snake_length - 3).toString(), {
                 size: 32
             }),
-            k.pos(65,300)
+            k.pos(325,150)
         ]);
+
 
     }, []);
 
