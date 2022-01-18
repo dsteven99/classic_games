@@ -207,6 +207,7 @@ const Breakout = () => {
         addButton("Start", k.vec2(k.width() / 2, k.height() - 40), () => {
             level = 1;
             scoreLabel.text = "Level: " + (level).toString();
+            gameOver.text = "";
             spawnBricks();
         });
 
