@@ -24,7 +24,7 @@ const Breakout = () => {
         const bricks_row = 14;
         const rows = 6;
         let level = 1;
-        const total_levels = 2;
+        const total_levels = 3;
 
         k.add([
             k.pos(k.width() / 2, k.height() - 100),
@@ -81,7 +81,9 @@ const Breakout = () => {
                         spawnBricks();
                     }
                     else{
-                        scoreLabel.text = "Level: " + (level - 1).toString() + " GAME OVER!";
+                        scoreLabel.text = "Level: " + (level - 1).toString();
+                        gameOver.text = "Game Over!";
+
                         startGame = false;
                     }
 
@@ -146,6 +148,20 @@ const Breakout = () => {
                         }
                     }
 
+                    if(level === 3){
+                        if (j === 4 && (i > 10 || i < 3 || i === 5 || i === 6 || i === 7)) {
+                            k.add([
+                                k.pos(xPos + (i * 90), yPos + (j * 50)),
+                                k.rect(80, 40),
+                                k.outline(4),
+                                k.color(255, 0, 0),
+                                k.area(),
+                                "block",
+                            ]);
+                            continue;
+                        }
+                    }
+
                     k.add([
                         k.pos(xPos + (i * 90), yPos + (j * 50)),
                         k.rect(80, 40),
@@ -198,7 +214,14 @@ const Breakout = () => {
             k.text("Level: " + (level).toString(), {
                 size: 32
             }),
-            k.pos((k.width() / 2) + 100, k.height() - 55)
+            k.pos((k.width() / 2) + 400, k.height() - 55)
+        ]);
+
+        const gameOver = k.add([
+            k.text("", {
+                size: 32
+            }),
+            k.pos(k.center().x - 100, k.center().y - 50)
         ]);
 
     }, []);
