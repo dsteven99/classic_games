@@ -332,7 +332,7 @@ const Snake = () => {
 
     }, []);
 
-    return <div class="board"><canvas ref={canvasRef}></canvas></div>
+    return <div className="board"><canvas ref={canvasRef}></canvas></div>
 };
 
 export default Snake;

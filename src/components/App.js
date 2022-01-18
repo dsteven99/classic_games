@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import Snake from './Snake';
+import Breakout from './Breakout';
 
 class App extends React.Component {
 
@@ -17,6 +18,7 @@ class App extends React.Component {
                     <Routes>
                         <Route exact path="/" element={<Home />} />
                         <Route exact path="/snake" element={<Snake />} />
+                        <Route exact path="/breakout" element={<Breakout />} />
                     </Routes>
                 </div>
                 <div className="loader" hidden={!this.props.loading}></div>
