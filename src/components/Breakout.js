@@ -16,15 +16,18 @@ const Breakout = () => {
 
         k.loadSound("explode", "/audio/snake/explode.mp3");
         k.loadSound("score", "/audio/score.mp3");
+        k.loadSound("signal", "/audio/signal.mp3");
 
         // Adjust global volume
         k.volume(0.5)
 
         let score = 0;
+        let levelHits = 0;
         const bricks_row = 14;
         const rows = 6;
         let level = 1;
         const total_levels = 3;
+        let numOfBalls = 3;
 
         k.add([
             k.pos(k.width() / 2, k.height() - 100),
@@ -60,12 +63,24 @@ const Breakout = () => {
             if (startGame) {
                 ball.move(ball.vel.scale(speed))
                 if (ball.pos.y > k.height() - 10) {
-                    score = 0
+                    score -= levelHits;
+                    scoreLabel.text = "Score: " + score.toString();
+                    levelHits = 0;
                     ball.pos = k.center()
                     ball.vel = k.dir(90)
-                    speed = 320;
                     k.play("explode");
-                    spawnBricks();
+
+                    numOfBalls -= 1;
+
+                    if(numOfBalls === 0){
+                        startGame = false;
+                        gameOver.text = "Game Over!";
+                        k.play("signal");
+                    }
+                    else{
+                        spawnBricks();
+                    }
+                    
 
                 }
                 if (ball.pos.x < 10 || ball.pos.x > k.width() - 10) {
@@ -74,19 +89,17 @@ const Breakout = () => {
                 if (ball.pos.y < 10) {
                     ball.pos = k.center();
                     ball.vel = k.dir(90);
-                    speed = 320;
                     level += 1;
                     if (level <= total_levels) {
-                        scoreLabel.text = "Level: " + (level).toString();
+                        levelLabel.text = "Level: " + (level).toString();
                         spawnBricks();
                     }
-                    else{
-                        scoreLabel.text = "Level: " + (level - 1).toString();
+                    else {
+                        levelLabel.text = "Level: " + (level - 1).toString();
                         gameOver.text = "Game Over!";
-
-                        startGame = false;
+                        k.play("signal");
                     }
-
+                    startGame = false;
                 }
             }
 
@@ -102,6 +115,9 @@ const Breakout = () => {
             speed += 1
             ball.vel = k.dir(ball.pos.angle(b.pos));
             k.play("score");
+            score += 1;
+            levelHits += 1;
+            scoreLabel.text = "Score: " + score.toString();
             k.destroy(b);
         });
 
@@ -114,10 +130,10 @@ const Breakout = () => {
         function spawnBricks() {
             k.destroyAll("block");
             k.destroyAll("brick");
-
+            levelHits = 0;
             let xPos = 20;
             let yPos = 20;
-
+            
             for (let j = 0; j < rows; ++j) {
                 for (let i = 0; i < bricks_row; ++i) {
                     if (level === 2) {
@@ -148,7 +164,7 @@ const Breakout = () => {
                         }
                     }
 
-                    if(level === 3){
+                    if (level === 3) {
                         if (j === 4 && (i > 10 || i < 3 || i === 5 || i === 6 || i === 7)) {
                             k.add([
                                 k.pos(xPos + (i * 90), yPos + (j * 50)),
@@ -205,13 +221,20 @@ const Breakout = () => {
         }
 
         addButton("Start", k.vec2(k.width() / 2, k.height() - 40), () => {
-            level = 1;
-            scoreLabel.text = "Level: " + (level).toString();
-            gameOver.text = "";
+            if (level === 1 || level > total_levels) {
+                level = 1;
+                score = 0;
+                levelHits = 0;
+                levelLabel.text = "Level: " + (level).toString();
+                scoreLabel.text = "Score: 0";
+                gameOver.text = "";
+                numOfBalls = 3;
+            }
+            speed = 320;
             spawnBricks();
         });
 
-        const scoreLabel = k.add([
+        const levelLabel = k.add([
             k.text("Level: " + (level).toString(), {
                 size: 32
             }),
@@ -220,9 +243,16 @@ const Breakout = () => {
 
         const gameOver = k.add([
             k.text("", {
+                size: 32,
+            }),
+            k.pos(k.center().x - 100, k.center().y + 100)
+        ]);
+
+        const scoreLabel = k.add([
+            k.text("Score : 0", {
                 size: 32
             }),
-            k.pos(k.center().x - 100, k.center().y - 50)
+            k.pos((k.width() / 2) + 150, k.height() - 55)
         ]);
 
     }, []);
